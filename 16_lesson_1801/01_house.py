@@ -6,6 +6,10 @@ HEIGHT = 720
 FPS = 30
 LINE = WIDTH / 256
 
+R = HEIGHT * 0.12
+SUN_X = 0 - R
+SUN_Y = HEIGHT * 0.2
+
 colors = {
     'green': (99, 199, 126),
     'blue': (230, 255, 252),
@@ -22,9 +26,6 @@ colors = {
 s = pg.display.set_mode((WIDTH, HEIGHT))
 clock = pg.time.Clock()
 
-rect(s, colors['blue'], [0, 0, WIDTH, HEIGHT * 0.6])
-rect(s, colors['green'], [0, HEIGHT * 0.6, WIDTH, HEIGHT * 0.4])
-
 pg.display.update()
 finished = False
 while not finished:
@@ -32,6 +33,10 @@ while not finished:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             finished = True
+
+    rect(s, colors['blue'], [0, 0, WIDTH, HEIGHT * 0.6])
+    rect(s, colors['green'], [0, HEIGHT * 0.6, WIDTH, HEIGHT * 0.4])
+
     # нарисую домик
     house_x = WIDTH * 0.1
     house_y = HEIGHT * 0.35
@@ -40,6 +45,9 @@ while not finished:
 
     rect(s, colors['brick'], [house_x, house_y, house_width, house_height])
     rect(s, colors['dark_brick'], [house_x, house_y, house_width, house_height], 4)
+
+    # солнце
+    circle(s, colors['yellow'], [SUN_X, SUN_Y], R)
 
     # нариcую крышу
     polygon(s, colors['terr'], [
@@ -65,7 +73,9 @@ while not finished:
     rect(s, colors['dark_brick'], [door_x + (door_x * 0.8), door_y,
                              house_width * 0.45, house_height * 0.35], 5, border_radius=15)
 
-    # солнце
-    circle(s, colors['yellow'], [WIDTH * 0.7, HEIGHT * 0.2], HEIGHT * 0.12)
-
     pg.display.update()
+
+    if SUN_X > WIDTH + R:  # если солнце зашло за пределы правой границы экрана
+        SUN_X = 0 - R  # вернуть его налево
+    else:  # иначе
+        SUN_X += 5  # сдвигать направо
