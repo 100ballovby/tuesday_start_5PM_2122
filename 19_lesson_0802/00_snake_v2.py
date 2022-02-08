@@ -85,6 +85,10 @@ def game_loop():
         if len(snake_list) > snake_length:
             snake_list.pop(0)
 
+        for x in snake_list[:-1]:  # просмотреть все сегменты, кроме головы
+            if x == snake_segment:  # если сегмент столкнулся с головой
+                pause = True  # остановить игру
+
         snake = draw_snake(snake_block, snake_list)  # рисую змею
         food = rect(screen, RED, [food_x, food_y, snake_block, snake_block])
 
