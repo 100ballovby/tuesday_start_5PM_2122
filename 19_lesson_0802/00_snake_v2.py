@@ -2,6 +2,12 @@ import pygame as pg
 from pygame.draw import rect, circle, polygon
 from random import randrange  # для случайных координат появления еды
 
+
+def draw_snake(block, s_list):
+    for x in s_list:  # для каждой пары координат
+        snake = rect(screen, BLUE, [x[0], x[1], block, block])  # рисую сегмент змейки
+    return snake  # возвращаю сегмент змеи
+
 W = 1600
 H = 900
 screen = pg.display.set_mode((W, H))
@@ -16,8 +22,10 @@ x1 = 200  # змея появляется в этих координатах
 y1 = 200  # змея появляется в этих координатах
 x1_change = 0  # изменение положения змеи в пространстве
 y1_change = 0  # изменение положения змеи в пространстве
-snake_block = 10  # размер змеи
-speed = 5
+snake_block = 30  # размер змеи
+speed = 15
+snake_list = []
+snake_length = 1
 
 food_x = round(randrange(0, W - snake_block) / 10) * 10  # случайные координаты появления еды
 food_y = round(randrange(0, H - snake_block) / 10) * 10  # случайные координаты появления еды
@@ -66,14 +74,27 @@ while not finished:
     if (x1 >= W or x1 < 0) or (y1 >= H or y1 < 0):  # если коснулись стены
         pause = True  # остановить игру
 
-    x1 += x1_change
-    y1 += y1_change
+    x1 += x1_change  # изменение координат змеи
+    y1 += y1_change  # изменение координат змеи
     screen.fill(WHITE)
-    rect(screen, BLUE, [x1, y1, snake_block, snake_block])
-    rect(screen, RED, [food_x, food_y, snake_block, snake_block])
+
+    snake_segment = []  # храню координаты каждого сегмента змеи
+    snake_segment.append(x1)  # записываю обновленную координату х
+    snake_segment.append(y1)  # записываю обновленную координату у
+    snake_list.append(snake_segment)  # добавляю координаты сегмента в список со змеей
+    if len(snake_list) > snake_length:
+        snake_list.pop(0)
+
+    snake = draw_snake(snake_block, snake_list)  # рисую змею
+    food = rect(screen, RED, [food_x, food_y, snake_block, snake_block])
+
+    show_score = font_style.render(f'Score {snake_length - 1}',
+                                   True, BLACK)
+    screen.blit(show_score, [0, 0])
+
     pg.display.update()
 
-    if x1 == food_x and y1 == food_y:
-        print('я поела')
+    if snake.colliderect(food):
+        snake_length += 1  # длина змеи увеличивается на 1, когда змея ест еду
         food_x = round(randrange(0, W - snake_block) / 10) * 10  # случайные координаты появления еды
         food_y = round(randrange(0, H - snake_block) / 10) * 10
