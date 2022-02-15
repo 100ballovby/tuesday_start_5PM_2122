@@ -38,3 +38,9 @@ while not finished:  # пока игра не окончена
     if keys[pg.K_RIGHT]:
         player_x += 30
 
+    # движение шарика
+    enemy_y += 15
+    if enemy_y > H:
+        enemy_y = 0
+        enemy_x = randint(0, W)
+
