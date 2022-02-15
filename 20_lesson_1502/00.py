@@ -15,6 +15,15 @@ player_y = 580
 enemy_x = randint(0, W)
 enemy_y = 0
 
+score = 3
+
+
+def show_text(text, color, x, y):
+    pg.font.init()
+    font = pg.font.SysFont('comicsans', 32)
+    txt = font.render(text, True, color)
+    screen.blit(txt, [x, y])
+
 
 finished = False  # флаг, который отвечает за работу программы
 while not finished:  # пока игра не окончена
@@ -33,7 +42,9 @@ while not finished:  # пока игра не окончена
     if platform.colliderect(enemy):
         enemy_y = 0
         enemy_x = randint(0, W)
+        score += 1
 
+    show_text(f'Score: {score}', (0, 0, 0), 0, 0)
     pg.display.update()
 
     # перемещение платформы по кнопкам
@@ -48,4 +59,5 @@ while not finished:  # пока игра не окончена
     if enemy_y > H:
         enemy_y = 0
         enemy_x = randint(0, W)
+        score -= 1
 
