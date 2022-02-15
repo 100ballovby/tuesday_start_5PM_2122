@@ -29,6 +29,11 @@ while not finished:  # пока игра не окончена
     platform = rect(screen, (0, 0, 0), [player_x, player_y, 200, 50])
     enemy = circle(screen, (255, 0, 0), [enemy_x, enemy_y], 40)
 
+    # коллизия платформы
+    if platform.colliderect(enemy):
+        enemy_y = 0
+        enemy_x = randint(0, W)
+
     pg.display.update()
 
     # перемещение платформы по кнопкам
