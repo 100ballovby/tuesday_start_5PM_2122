@@ -26,6 +26,25 @@ def ball_motion(obj, width, height, plr, enm):
         ball_speed_x *= - 1  # отбить мяч в другую сторону
 
 
+def opponent_ai(enm, self_speed, height, obj):
+    """
+    Функция автоматического передвижения платформы-оппонента по игровому полю
+    :param enm: платформа-оппонент
+    :param self_speed: скорость передвижения
+    :param height: высота экрана
+    :param obj: игровой объект-мяч
+    :return: None
+    """
+    if enm.top < obj.y:  # если верхняя граница платформы ниже Y мяча
+        enm.y += self_speed
+    elif enm.bottom > obj.y:  # если нижняя граница платформы выше Y мяча
+        enm.y -= self_speed
+
+    if enm.top <= 0:  # если верхняя граница платформы выше верхней границы экрана
+        enm.top = 0  # остановить платформу в Y = 0
+    elif enm.bottom >= height:  # если нижняя граница платформы ниже нижней границы экрана
+        enm.bottom = height  # остановить платформу в Y = H
+
 W = 1280
 H = 720
 screen = pg.display.set_mode((W, H))
@@ -45,6 +64,7 @@ opponent = pg.Rect(10, H // 2, 10, 150)
 speed = 8
 ball_speed_x = speed
 ball_speed_y = speed
+opponent_speed = speed
 
 finished = False
 while not finished:
@@ -55,6 +75,7 @@ while not finished:
 
     # Game logic
     ball_motion(ball, W, H, player, opponent)
+    opponent_ai(opponent, opponent_speed, H, ball)
 
     # Visuals
     screen.fill(bg_color)
