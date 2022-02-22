@@ -4,6 +4,7 @@ from pygame.draw import rect, circle, polygon
 W = 640
 H = 640
 screen = pg.display.set_mode((W, H))
+pg.display.set_caption('Pong game Python🏓')
 clock = pg.time.Clock()
 
 
