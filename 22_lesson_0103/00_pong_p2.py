@@ -1,5 +1,6 @@
 import pygame as pg
 from pygame.draw import rect, circle, polygon, aaline, ellipse
+import random as r
 
 
 def ball_motion(obj, width, height, plr, enm):
@@ -19,8 +20,11 @@ def ball_motion(obj, width, height, plr, enm):
 
     if obj.top <= 0 or obj.bottom > height:  # если мяч ударился об нижнюю или верхнюю часть экрана
         ball_speed_y *= -1  # направить его в противоположную сторону
-    elif obj.left <= 0 or obj.right > width:  # если мяч ударился об правую или левую границу экрана
-        ball_speed_x *= -1  # направить его в противоположную сторону
+
+    elif obj.left <= 0:
+        restart(width, height, obj)
+    elif obj.right > width:  # если мяч ударился об правую или левую границу экрана
+        restart(width, height, obj)  # направить его в противоположную сторону
 
     if obj.colliderect(plr) or obj.colliderect(enm):  # если мяч коснулся игрока или врага
         ball_speed_x *= - 1  # отбить мяч в другую сторону
@@ -54,6 +58,14 @@ def player_motion(plr, speed, height):
     elif plr.bottom >= height:
         plr.bottom = height
 
+
+def restart(width, height, obj):
+    global ball_speed_x, ball_speed_y
+
+    obj.center = (width // 2, height // 2)  # ставим мяч в центр экрана
+    ball_speed_x *= r.choice([-1, 1])
+    ball_speed_y *= r.choice([-1, 1])
+
 W = 1280
 H = 720
 screen = pg.display.set_mode((W, H))
@@ -75,6 +87,17 @@ ball_speed_x = speed
 ball_speed_y = speed
 opponent_speed = speed
 player_speed = 0
+
+# Score text
+pg.font.init()
+player_score = 0
+opponent_score = 0
+
+
+def show_score(size, color, x, y, text):
+    basic_font = pg.font.SysFont('comicsans', size)
+    msg = basic_font.render(text, True, color)
+    screen.blit(msg, [x, y])
 
 finished = False
 while not finished:
@@ -104,5 +127,8 @@ while not finished:
     rect(screen, blue, opponent)
     ellipse(screen, blue, ball)
     aaline(screen, blue, [W // 2, 0], [W // 2, H])
+
+    show_score(63, blue, W // 2 + 20, H // 2, f'{player_score}')
+    show_score(63, blue, W // 2 - 60, H // 2, f'{opponent_score}')
 
     pg.display.update()
