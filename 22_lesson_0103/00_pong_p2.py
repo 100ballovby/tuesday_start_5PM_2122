@@ -45,6 +45,15 @@ def opponent_ai(enm, self_speed, height, obj):
     elif enm.bottom >= height:  # если нижняя граница платформы ниже нижней границы экрана
         enm.bottom = height  # остановить платформу в Y = H
 
+
+def player_motion(plr, speed, height):
+    plr.y += speed
+
+    if plr.top <= 0:
+        plr.top = 0
+    elif plr.bottom >= height:
+        plr.bottom = height
+
 W = 1280
 H = 720
 screen = pg.display.set_mode((W, H))
@@ -65,6 +74,7 @@ speed = 8
 ball_speed_x = speed
 ball_speed_y = speed
 opponent_speed = speed
+player_speed = 0
 
 finished = False
 while not finished:
@@ -72,10 +82,21 @@ while not finished:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             finished = True
+        if event.type == pg.KEYDOWN:  # если кнопка нажата
+            if event.key == pg.K_UP:  # если нажали на стрелку вверх
+                player_speed -= speed
+            if event.key == pg.K_DOWN:  # если нажали на стрелку вниз
+                player_speed += speed
+        if event.type == pg.KEYUP:
+            if event.key == pg.K_UP:
+                player_speed += speed
+            if event.key == pg.K_DOWN:
+                player_speed -= speed
 
     # Game logic
     ball_motion(ball, W, H, player, opponent)
     opponent_ai(opponent, opponent_speed, H, ball)
+    player_motion(player, player_speed, H)
 
     # Visuals
     screen.fill(bg_color)
