@@ -20,16 +20,20 @@ def ball_motion(obj, width, height, plr, enm):
 
     if obj.top <= 0 or obj.bottom > height:  # если мяч ударился об нижнюю или верхнюю часть экрана
         ball_speed_y *= -1  # направить его в противоположную сторону
+        pg.mixer.Sound.play(pong_sound)
 
     elif obj.left <= 0:
         restart(width, height, obj)
         player_score += 1
+        pg.mixer.Sound.play(score_sound)
     elif obj.right > width:  # если мяч ударился об правую или левую границу экрана
         restart(width, height, obj)  # направить его в противоположную сторону
         opponent_score += 1
+        pg.mixer.Sound.play(score_sound)
 
     if obj.colliderect(plr) or obj.colliderect(enm):  # если мяч коснулся игрока или врага
         ball_speed_x *= - 1  # отбить мяч в другую сторону
+        pg.mixer.Sound.play(pong_sound)
 
 
 def opponent_ai(enm, self_speed, height, obj):
@@ -100,6 +104,12 @@ def show_score(size, color, x, y, text):
     basic_font = pg.font.SysFont('comicsans', size)
     msg = basic_font.render(text, True, color)
     screen.blit(msg, [x, y])
+
+
+# Sounds
+pg.mixer.init()
+pong_sound = pg.mixer.Sound('cart_pong.wav')  # сюда пишется название звука, который должен лежать в ТОЙ ЖЕ ПАПКЕ, что и файл игры
+score_sound = pg.mixer.Sound('Score.wav')  # сюда пишется название звука, который должен лежать в ТОЙ ЖЕ ПАПКЕ, что и файл игры
 
 finished = False
 while not finished:
