@@ -13,7 +13,7 @@ def ball_motion(obj, width, height, plr, enm):
     :param enm: ракетка-враг
     :return: None
     """
-    global ball_speed_x, ball_speed_y
+    global ball_speed_x, ball_speed_y, player_score, opponent_score
 
     obj.x += ball_speed_x
     obj.y += ball_speed_y
@@ -23,8 +23,10 @@ def ball_motion(obj, width, height, plr, enm):
 
     elif obj.left <= 0:
         restart(width, height, obj)
+        player_score += 1
     elif obj.right > width:  # если мяч ударился об правую или левую границу экрана
         restart(width, height, obj)  # направить его в противоположную сторону
+        opponent_score += 1
 
     if obj.colliderect(plr) or obj.colliderect(enm):  # если мяч коснулся игрока или врага
         ball_speed_x *= - 1  # отбить мяч в другую сторону
