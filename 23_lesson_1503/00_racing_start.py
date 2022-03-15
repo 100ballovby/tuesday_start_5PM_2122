@@ -28,6 +28,6 @@ while not finished:
     rect(screen, GRAY, road)  # дорога
     rect(screen, SAND, border_left)  # левая обочина
     rect(screen, SAND, border_right)  # правая обочина
-    rect(screen, WHITE, [396, 0, 8, H])
+    rect(screen, WHITE, [396, 0, 8, H])  # линия разметки
 
     pg.display.update()
