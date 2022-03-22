@@ -33,8 +33,8 @@ clock = pg.time.Clock()
 # Game objects
 road = pg.Rect(0, 0, W // 2, H)
 road.center = W // 2, H // 2
-border_left = pg.Rect(road.left - 50, 0, 50, H)
-border_right = pg.Rect(road.right, 0, 50, H)
+border_left = pg.Rect(road.left - W * 0.1, 0, W * 0.1, H)
+border_right = pg.Rect(road.right, 0, W * 0.1, H)
 
 img = pg.image.load('car.png').convert_alpha()  # загружаю картинку машины
 img_rect = img.get_rect()  # превращаю картинку в объект
