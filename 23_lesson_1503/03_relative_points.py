@@ -31,7 +31,8 @@ screen = pg.display.set_mode((W, H))
 clock = pg.time.Clock()
 
 # Game objects
-road = pg.Rect(200, 0, 400, H)
+road = pg.Rect(0, 0, W // 2, H)
+road.center = W // 2, H // 2
 border_left = pg.Rect(road.left - 50, 0, 50, H)
 border_right = pg.Rect(road.right, 0, 50, H)
 
