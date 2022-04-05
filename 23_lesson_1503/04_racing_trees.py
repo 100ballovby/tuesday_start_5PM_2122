@@ -19,11 +19,37 @@ def moving(obj, speed, l_side, r_side):
     if obj.colliderect(r_side):
         obj.right = r_side.left - 5
 
+
+def paddle_moving(obj, surf, s_height, jump):
+    global score, high_score
+
+    if obj.y >= s_height:  # если препятствие ушло за пределы экрана
+        x = r.randint(1, 3)
+        if x == 1:
+            obj.x = surf.x  # ставлю препятствие слева (по левому краю дороги)
+        elif x == 2:
+            obj.center = surf.center  # ставлю препятствие посередине
+        else:
+            obj.right = surf.right  # ставлю препятствие справа (по правому краю дороги)
+        obj.y = -jump  # отправляю препятствие наверх
+        score += 1
+    if score > high_score:  # если текущие очки больше рекорда
+        high_score = score  # рекорд и есть очки
+
+
+def show_text(text, size, color, x, y, surf):
+    pg.font.init()
+    font = pg.font.SysFont('comicsans', size)
+    msg = font.render(text, True, color)
+    surf.blit(msg, [x, y])
+
+
 WHITE = (255, 255, 255)
 GREEN = (7, 115, 14)
 SAND = (255, 237, 181)
 GRAY = (64, 64, 64)
 RED = (201, 22, 55)
+ORANGE = (255, 155, 48)
 
 W = 800
 H = 900
@@ -40,6 +66,11 @@ border_right = pg.Rect(road.right, 0, W * 0.1, H)
 road_width = road.width  # измеряет ширину дороги
 paddle1 = pg.Rect(road.x, -50, road_width * 0.3, 30)  # препятствие №1
 paddle2 = pg.Rect(road.x, -H // 2, road_width * 0.3, 30)  # препятствие №2
+
+score_rect = pg.Rect(20, 20, W * 0.15, H * 0.05)
+high_score_rect = pg.Rect(20, score_rect.bottom + 10, W * 0.21, H * 0.05)
+start_btn = pg.Rect(0, 0, W * 0.2, H * 0.1)  # кнопка запуска игры
+start_btn.center = W // 2, H // 2  # расположить кнопку посередине
 
 # Images
 img = pg.image.load('car.png').convert_alpha()  # загружаю картинку машины
@@ -65,9 +96,34 @@ tree2_rect.y = -(H * 0.8)
 car_speed = 0  # начальная скорость машины
 angle = 0  # начальный градус поворота машины
 speed = 10  # общее значение скорости для всех объектов в игре
+score = 0
+high_score = 0
 
 finished = False
+game_over = False
 while not finished:
+
+    while game_over:
+        screen.fill(WHITE)
+        rect(screen, GREEN, start_btn)  # рисую кнопку перезапуска
+
+        rect(screen, ORANGE, score_rect)
+        rect(screen, ORANGE, high_score_rect)
+        show_text(f'Score {score}', 24, WHITE, score_rect.x, score_rect.y, screen)
+        show_text(f'High score {high_score}', 24, WHITE, high_score_rect.x, high_score_rect.y, screen)
+        pg.display.update()
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                game_over = False
+                finished = True
+            if event.type == pg.MOUSEBUTTONDOWN:  # если мышь нажата
+                if start_btn.collidepoint(event.pos):  # если мышь над кнопкой старта
+                    paddle1.y = 0
+                    paddle2.y = - 500
+                    game_over = False
+                    score = 0
+
     clock.tick(30)
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -100,6 +156,11 @@ while not finished:
     screen.blit(car, car_rect)  # отображаю машину в координатах car_rect
     screen.blit(tree1, tree1_rect)
     screen.blit(tree2, tree2_rect)
+
+    rect(screen, ORANGE, score_rect)
+    rect(screen, ORANGE, high_score_rect)
+    show_text(f'Score {score}', 24, WHITE, score_rect.x, score_rect.y, screen)
+    show_text(f'High score {high_score}', 24, WHITE, high_score_rect.x, high_score_rect.y, screen)
     pg.display.update()
 
     # Game logic
@@ -107,25 +168,9 @@ while not finished:
 
     paddle1.y += speed  # препятствие падает вниз
     paddle2.y += speed  # препятствие падает вниз
-    if paddle1.y >= H:  # если препятствие ушло за пределы экрана
-        x = r.randint(1, 3)
-        if x == 1:
-            paddle1.x = road.x  # ставлю препятствие слева (по левому краю дороги)
-        elif x == 2:
-            paddle1.center = road.center  # ставлю препятствие посередине
-        else:
-            paddle1.right = road.right  # ставлю препятствие справа (по правому краю дороги)
-        paddle1.y = -50  # отправляю препятствие наверх
 
-    if paddle2.y >= H:  # если препятствие ушло за пределы экрана
-        x = r.randint(1, 3)
-        if x == 1:
-            paddle2.x = road.x  # ставлю препятствие слева (по левому краю дороги)
-        elif x == 2:
-            paddle2.center = road.center  # ставлю препятствие посередине
-        else:
-            paddle2.right = road.right  # ставлю препятствие справа (по правому краю дороги)
-        paddle2.y = -100  # отправляю препятствие наверх
+    paddle_moving(paddle1, road, H, H * 0.2)
+    paddle_moving(paddle2, road, H, H * 0.8)
 
     tree1_rect.y += speed  # дерево летит вниз
     tree2_rect.y += speed  # дерево летит вниз
@@ -136,4 +181,4 @@ while not finished:
 
     # Game over
     if car_rect.colliderect(paddle1) or car_rect.colliderect(paddle2):
-        finished = True
+        game_over = True
